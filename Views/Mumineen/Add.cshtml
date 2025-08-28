@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Mumineen - Index";
+}
+@model ITSAssignment.Web.Models.AddMumineenViewModel
+
+<h2>Mumineen Index Page</h2>
+<p>This is an empty Razor view for Mumineen.</p>
+<form method="post" asp-action="Add">
+Enter ITS: <input type="number" asp-for="Its" value="" />  </br>
+Enter Name <input type="text" asp-for="Name" value="" /> </br>
+Enter Age <input type="number" asp-for="Age"></input> </br>
+Select Gender <select asp-for="Gender">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+</select> </br>
+Enter Mobile Number <input type="number" asp-for="Mobile_number" value="" /> </br>
+@* Enter email <input type="text" asp-for="Email" value="" /> </br> *@
+Enter marital status <input type="text" asp-for="Marital_status" value="" /> </br>
+Enter Address <input type="text" asp-for="Address" value="" />
+@* Enter role <input type="text" name="role" />*@
+<button type="submit">Add User</button>
+</form>
