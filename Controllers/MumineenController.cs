@@ -1,17 +1,18 @@
 ﻿using ITSAssignment.Web.Models;
 using ITSAssignment.Web.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using BCrypt.Net;
 
 namespace ITSAssignment.Web.Controllers
 {
     public class MumineenController : Controller
     {
         private readonly ApplicationDbContext dbContext;
+
         public MumineenController(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
+
         private bool IsUserLoggedIn()
         {
             return !string.IsNullOrEmpty(HttpContext.Session.GetString("Its"));
@@ -28,28 +29,51 @@ namespace ITSAssignment.Web.Controllers
         {
             if (!IsUserLoggedIn())
                 return RedirectToLogin();
-            return View();
+
+            int its = int.Parse(HttpContext.Session.GetString("Its")!);
+            var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == its);
+
+            if (user == null) return RedirectToLogin();
+
+            var model = new AddMumineenViewModel
+            {
+                Its = user.Its,
+                Name = user.Name,
+                Age = user.Age,
+                Gender = user.Gender,
+                Mobile_number = user.Mobile_number,
+                Email_address = user.Email_address,
+                Marital_status = user.Marital_status,
+                Address = user.Address
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Add(AddMumineenViewModel viewModel)
         {
-            var student = new Mumineen
-            {
-                Id = Guid.NewGuid(),
-                Its = viewModel.Its,
-                Name = viewModel.Name,
-                Age = viewModel.Age,
-                Gender = viewModel.Gender,
-                Mobile_number = viewModel.Mobile_number,
-                Marital_status = viewModel.Marital_status,
-                Address = viewModel.Address,
-                Password = BCrypt.Net.BCrypt.HashPassword(viewModel.Password)
-            };
+            if (!IsUserLoggedIn())
+                return RedirectToLogin();
 
-            await dbContext.Mumineen.AddAsync(student);
+            int its = int.Parse(HttpContext.Session.GetString("Its")!);
+            var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == its);
+
+            if (user == null) return RedirectToLogin();
+
+            // Update fields (ITS should not change)
+            user.Name = viewModel.Name;
+            user.Age = viewModel.Age;
+            user.Gender = viewModel.Gender;
+            user.Mobile_number = viewModel.Mobile_number;
+            user.Email_address = viewModel.Email_address;
+            user.Marital_status = viewModel.Marital_status;
+            user.Address = viewModel.Address;
+
             await dbContext.SaveChangesAsync();
-            return RedirectToAction("Add");
+
+            ViewBag.Message = "Profile updated successfully!";
+            return View(viewModel);
         }
     }
 }

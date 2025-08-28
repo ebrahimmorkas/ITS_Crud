@@ -27,7 +27,7 @@
                 <tr>
                     <td>@(string.IsNullOrEmpty(user.Age.ToString()) || user.Age == 0 ? "Not Added" : user.Age.ToString())</td>
 <td>@(string.IsNullOrEmpty(user.Gender) ? "Not Added" : user.Gender)</td>
-<td>@(user.Mobile_number == 0 ? "Not Added" : user.Mobile_number.ToString())</td>
+<td>@(string.IsNullOrEmpty(user.Mobile_number) ? "Not Added" : user.Mobile_number)</td>
 <td>@(string.IsNullOrEmpty(user.Email_address) ? "Not Added" : user.Email_address)</td>
 <td>@(string.IsNullOrEmpty(user.Marital_status) ? "Not Added" : user.Marital_status)</td>
 <td>@(string.IsNullOrEmpty(user.Address) ? "Not Added" : user.Address)</td>

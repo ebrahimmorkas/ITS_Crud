@@ -47,7 +47,7 @@ namespace ITSAssignment.Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Mobile_number")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
