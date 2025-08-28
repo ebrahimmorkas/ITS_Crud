@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ITSAssignment.Web.Models.Entities.Mumineen>
+@{
+    ViewData["Title"] = "Users List";
+    Layout = "_Layout";
+}
+
+<h2 class="text-center mb-4">All Users</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ITS</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Marital Status</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var user in Model)
+            {
+                <tr>
+                    <td>@(string.IsNullOrEmpty(user.Age.ToString()) || user.Age == 0 ? "Not Added" : user.Age.ToString())</td>
+<td>@(string.IsNullOrEmpty(user.Gender) ? "Not Added" : user.Gender)</td>
+<td>@(user.Mobile_number == 0 ? "Not Added" : user.Mobile_number.ToString())</td>
+<td>@(string.IsNullOrEmpty(user.Email_address) ? "Not Added" : user.Email_address)</td>
+<td>@(string.IsNullOrEmpty(user.Marital_status) ? "Not Added" : user.Marital_status)</td>
+<td>@(string.IsNullOrEmpty(user.Address) ? "Not Added" : user.Address)</td>
+
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2">Change Password</button>
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

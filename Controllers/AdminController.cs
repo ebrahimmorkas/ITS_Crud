@@ -14,10 +14,32 @@ namespace ITSAssignment.Web.Controllers
             this.dbContext = dbContext;
         }
 
+        private bool IsAdminLoggedIn()
+        {
+            return HttpContext.Session.GetString("Role") == "admin";
+        }
+
         [HttpGet]
         public IActionResult AddMumineen()
         {
+            if (!IsAdminLoggedIn())
+                return RedirectToAction("Login", "Auth");
+
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult UsersList()
+        {
+            if (!IsAdminLoggedIn())
+                return RedirectToAction("Login", "Auth");
+
+            // Fetch all users except admins
+            var users = dbContext.Mumineen
+                                 .Where(u => u.Role != "admin")
+                                 .ToList();
+
+            return View(users);
         }
 
         [HttpPost]

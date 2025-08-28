@@ -23,7 +23,6 @@ namespace ITSAssignment.Web.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // 1️⃣ Find user by ITS
             var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == model.Its);
 
             if (user == null)
@@ -32,7 +31,6 @@ namespace ITSAssignment.Web.Controllers
                 return View(model);
             }
 
-            // 2️⃣ Verify password
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
             if (!isPasswordValid)
             {
@@ -40,17 +38,14 @@ namespace ITSAssignment.Web.Controllers
                 return View(model);
             }
 
-            // 3️⃣ Check role
-            if (user.Role == "admin")
-            {
-                //ViewBag.Message = "Hello Admin!";
-                return RedirectToAction("AddMumineen", "Admin");
-            }
-            else
-            {
-                ViewBag.Message = "Hello User!";
-            }
+            // Save login info in session
+            HttpContext.Session.SetString("Its", user.Its.ToString());
+            HttpContext.Session.SetString("Role", user.Role ?? "");
 
+            if (user.Role == "admin")
+                return RedirectToAction("AddMumineen", "Admin");
+
+            ViewBag.Message = "Hello User!";
             return View(model);
         }
     }
