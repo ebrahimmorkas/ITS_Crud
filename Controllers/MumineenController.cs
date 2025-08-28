@@ -12,9 +12,22 @@ namespace ITSAssignment.Web.Controllers
         {
             this.dbContext = dbContext;
         }
+        private bool IsUserLoggedIn()
+        {
+            return !string.IsNullOrEmpty(HttpContext.Session.GetString("Its"));
+        }
+
+        private IActionResult RedirectToLogin()
+        {
+            TempData["LoginMessage"] = "Please login to continue";
+            return RedirectToAction("Login", "Auth");
+        }
+
         [HttpGet]
         public IActionResult Add()
         {
+            if (!IsUserLoggedIn())
+                return RedirectToLogin();
             return View();
         }
 

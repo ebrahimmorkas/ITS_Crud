@@ -19,11 +19,17 @@ namespace ITSAssignment.Web.Controllers
             return HttpContext.Session.GetString("Role") == "admin";
         }
 
+        private IActionResult RedirectToLogin()
+        {
+            TempData["LoginMessage"] = "Please login to continue";
+            return RedirectToAction("Login", "Auth");
+        }
+
         [HttpGet]
         public IActionResult AddMumineen()
         {
             if (!IsAdminLoggedIn())
-                return RedirectToAction("Login", "Auth");
+                return RedirectToLogin();
 
             return View();
         }
@@ -32,7 +38,7 @@ namespace ITSAssignment.Web.Controllers
         public IActionResult UsersList()
         {
             if (!IsAdminLoggedIn())
-                return RedirectToAction("Login", "Auth");
+                return RedirectToLogin();
 
             // Fetch all users except admins
             var users = dbContext.Mumineen

@@ -4,6 +4,11 @@
     Layout = "_Layout";
 }
 
+@if (TempData["LoginMessage"] != null)
+{
+    <div class="alert alert-warning">@TempData["LoginMessage"]</div>
+}
+
 <h2 class="text-center mb-4">Login</h2>
 
 <div class="row justify-content-center">
@@ -24,7 +29,12 @@
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label">Password</label>
-                        <input asp-for="Password" class="form-control" placeholder="Enter password" type="password" required />
+                        <input asp-for="Password" class="form-control" placeholder="Enter password" type="password" id="passwordInput" required />
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="showPasswordCheck" />
+                        <label class="form-check-label" for="showPasswordCheck">Show Password</label>
                     </div>
 
                     <div class="d-grid">
@@ -36,3 +46,14 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const passwordInput = document.getElementById('passwordInput');
+        const showPasswordCheck = document.getElementById('showPasswordCheck');
+
+        showPasswordCheck.addEventListener('change', function () {
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+    </script>
+}

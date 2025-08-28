@@ -42,11 +42,11 @@ namespace ITSAssignment.Web.Controllers
             HttpContext.Session.SetString("Its", user.Its.ToString());
             HttpContext.Session.SetString("Role", user.Role ?? "");
 
+            // Redirect based on role
             if (user.Role == "admin")
                 return RedirectToAction("AddMumineen", "Admin");
 
-            ViewBag.Message = "Hello User!";
-            return View(model);
+            return RedirectToAction("Add", "Mumineen");
         }
     }
 }
