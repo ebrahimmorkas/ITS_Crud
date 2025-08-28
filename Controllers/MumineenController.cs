@@ -1,6 +1,7 @@
 ﻿using ITSAssignment.Web.Models;
 using ITSAssignment.Web.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
 
 namespace ITSAssignment.Web.Controllers
 {
@@ -29,7 +30,8 @@ namespace ITSAssignment.Web.Controllers
                 Gender = viewModel.Gender,
                 Mobile_number = viewModel.Mobile_number,
                 Marital_status = viewModel.Marital_status,
-                Address = viewModel.Address
+                Address = viewModel.Address,
+                Password = BCrypt.Net.BCrypt.HashPassword(viewModel.Password)
             };
 
             await dbContext.Mumineen.AddAsync(student);
