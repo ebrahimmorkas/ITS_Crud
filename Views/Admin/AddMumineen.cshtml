@@ -1,0 +1,43 @@
+﻿@model ITSAssignment.Web.Models.AddMumineenViewModel
+@{
+    ViewData["Title"] = "Add Mumineen";
+    Layout = "_Layout";
+}
+
+<h2 class="text-center mb-4">Add Mumineen (Admin)</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg rounded-3">
+            <div class="card-body p-4">
+
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success">@ViewBag.Message</div>
+                }
+
+                <form asp-action="AddMumineen" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Its" class="form-label">ITS Number</label>
+                        <input asp-for="Its" class="form-control" placeholder="Enter ITS number" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter Name" required />
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

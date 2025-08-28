@@ -43,7 +43,8 @@ namespace ITSAssignment.Web.Controllers
             // 3️⃣ Check role
             if (user.Role == "admin")
             {
-                ViewBag.Message = "Hello Admin!";
+                //ViewBag.Message = "Hello Admin!";
+                return RedirectToAction("AddMumineen", "Admin");
             }
             else
             {
