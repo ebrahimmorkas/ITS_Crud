@@ -69,5 +69,26 @@ namespace ITSAssignment.Web.Controllers
             ViewBag.Message = $"User {model.Name} added successfully!";
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            if (!IsAdminLoggedIn())
+                return RedirectToLogin();
+
+            var user = await dbContext.Mumineen.FindAsync(id);
+            if (user == null)
+            {
+                TempData["Message"] = "User not found!";
+                return RedirectToAction("UsersList");
+            }
+
+            dbContext.Mumineen.Remove(user);
+            await dbContext.SaveChangesAsync();
+
+            TempData["Message"] = $"User with ITS {user.Its} deleted successfully!";
+            return RedirectToAction("UsersList");
+        }
+
     }
 }
