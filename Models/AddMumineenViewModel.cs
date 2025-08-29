@@ -7,7 +7,7 @@ namespace ITSAssignment.Web.Models
         public int Its { get; set; }
         public string? Name { get; set; }
 
-        [Range(1, 99, ErrorMessage = "Age must be between 1 and 99")]
+        //[Range(1, 99, ErrorMessage = "Age must be between 1 and 99")]
         public int Age { get; set; }
 
         public string? Gender { get; set; }

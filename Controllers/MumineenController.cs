@@ -13,11 +13,7 @@ namespace ITSAssignment.Web.Controllers
             this.dbContext = dbContext;
         }
 
-        private bool IsUserLoggedIn()
-        {
-            return !string.IsNullOrEmpty(HttpContext.Session.GetString("Its"));
-        }
-
+        private bool IsUserLoggedIn() => !string.IsNullOrEmpty(HttpContext.Session.GetString("Its"));
         private IActionResult RedirectToLogin()
         {
             TempData["LoginMessage"] = "Please login to continue";
@@ -27,15 +23,13 @@ namespace ITSAssignment.Web.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            if (!IsUserLoggedIn())
-                return RedirectToLogin();
+            if (!IsUserLoggedIn()) return RedirectToLogin();
 
             int its = int.Parse(HttpContext.Session.GetString("Its")!);
             var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == its);
-
             if (user == null) return RedirectToLogin();
 
-            var model = new AddMumineenViewModel
+            var model = new UserUpdateViewModel
             {
                 Its = user.Its,
                 Name = user.Name,
@@ -51,29 +45,45 @@ namespace ITSAssignment.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(AddMumineenViewModel viewModel)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(UserUpdateViewModel model)
         {
-            if (!IsUserLoggedIn())
-                return RedirectToLogin();
+            if (!IsUserLoggedIn()) return RedirectToLogin();
+            if (!ModelState.IsValid) return View(model);
 
             int its = int.Parse(HttpContext.Session.GetString("Its")!);
             var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == its);
-
             if (user == null) return RedirectToLogin();
 
-            // Update fields (ITS should not change)
-            user.Name = viewModel.Name;
-            user.Age = viewModel.Age;
-            user.Gender = viewModel.Gender;
-            user.Mobile_number = viewModel.Mobile_number;
-            user.Email_address = viewModel.Email_address;
-            user.Marital_status = viewModel.Marital_status;
-            user.Address = viewModel.Address;
+            // Age < 16: email & phone can repeat, else must be unique
+            if (model.Age >= 16)
+            {
+                if (dbContext.Mumineen.Any(u => u.Email_address == model.Email_address && u.Its != its))
+                {
+                    ModelState.AddModelError(nameof(model.Email_address), "Email already in use by another user.");
+                    return View(model);
+                }
+
+                if (dbContext.Mumineen.Any(u => u.Mobile_number == model.Mobile_number && u.Its != its))
+                {
+                    ModelState.AddModelError(nameof(model.Mobile_number), "Mobile number already in use by another user.");
+                    return View(model);
+                }
+            }
+
+            // Save updates
+            user.Name = model.Name;
+            user.Age = model.Age;
+            user.Gender = model.Gender;
+            user.Mobile_number = model.Mobile_number;
+            user.Email_address = model.Email_address;
+            user.Marital_status = model.Marital_status;
+            user.Address = model.Address;
 
             await dbContext.SaveChangesAsync();
 
             ViewBag.Message = "Profile updated successfully!";
-            return View(viewModel);
+            return View(model);
         }
     }
 }
