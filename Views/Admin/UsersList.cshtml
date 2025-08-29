@@ -39,13 +39,48 @@
                     <td>@(string.IsNullOrEmpty(user.Marital_status) ? "Not Added" : user.Marital_status)</td>
                     <td>@(string.IsNullOrEmpty(user.Address) ? "Not Added" : user.Address)</td>
                     <td>
-                        <button class="btn btn-warning btn-sm me-2">Change Password</button>
-                        <!-- Delete Button Trigger -->
+                        <!-- Change Password Button -->
+                        <button type="button" class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#changePwdModal-@user.Id">
+                            Change Password
+                        </button>
+
+                        <!-- Delete Button -->
                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@user.Id">
                             Delete
                         </button>
 
-                        <!-- Modal -->
+                        <!-- Change Password Modal -->
+                        <div class="modal fade" id="changePwdModal-@user.Id" tabindex="-1" aria-labelledby="changePwdLabel-@user.Id" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="changePwdLabel-@user.Id">Change Password for @user.Name (ITS: @user.Its)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form asp-action="ChangePassword" asp-controller="Admin" method="post">
+                                            <input type="hidden" name="id" value="@user.Id" />
+
+                                            <div class="mb-3">
+                                                <label class="form-label">New Password</label>
+                                                <input type="password" name="newPassword" id="pwd-@user.Id" class="form-control" required />
+                                            </div>
+
+                                            <div class="form-check mb-3">
+                                                <input type="checkbox" class="form-check-input" id="showPwd-@user.Id" onclick="togglePwd('@user.Id')" />
+                                                <label class="form-check-label" for="showPwd-@user.Id">Show Password</label>
+                                            </div>
+
+                                            <div class="d-grid">
+                                                <button type="submit" class="btn btn-primary">Update Password</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Modal -->
                         <div class="modal fade" id="deleteModal-@user.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@user.Id" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -72,3 +107,12 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        function togglePwd(id) {
+            var pwdField = document.getElementById("pwd-" + id);
+            pwdField.type = pwdField.type === "password" ? "text" : "password";
+        }
+    </script>
+}

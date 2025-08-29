@@ -90,5 +90,29 @@ namespace ITSAssignment.Web.Controllers
             return RedirectToAction("UsersList");
         }
 
+        //For changing password of user
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(Guid id, string newPassword)
+        {
+            if (!IsAdminLoggedIn())
+                return RedirectToLogin();
+
+            var user = await dbContext.Mumineen.FindAsync(id);
+            if (user == null)
+            {
+                TempData["Message"] = "User not found!";
+                return RedirectToAction("UsersList");
+            }
+
+            // Hash new password
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+            await dbContext.SaveChangesAsync();
+
+            TempData["Message"] = $"Password for ITS {user.Its} changed successfully!";
+            return RedirectToAction("UsersList");
+        }
+
+
     }
 }
