@@ -34,20 +34,23 @@ namespace ITSAssignment.Web.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel model)
         {
-            var user = dbContext.Mumineen.FirstOrDefault(u => u.Its == model.Its);
-
-            if (user == null)
-            {
-                ViewBag.Message = "User not found!";
+            if (!ModelState.IsValid)
                 return View(model);
-            }
 
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
-            if (!isPasswordValid)
+            // Convert ITS to string if needed
+            string itsValue = model.Its.ToString(); // or model.Its if it's already string
+
+            var user = dbContext.Mumineen.FirstOrDefault(u => u.Its.ToString() == itsValue);
+
+            // Generic error message for all failures
+            if (user == null || string.IsNullOrEmpty(user.Password) ||
+                !BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
-                ViewBag.Message = "Incorrect password!";
+                ViewBag.Message = "Invalid credentials.";
                 return View(model);
             }
 
@@ -61,6 +64,7 @@ namespace ITSAssignment.Web.Controllers
 
             return RedirectToAction("Add", "Mumineen");
         }
+
 
         [HttpPost]
         public IActionResult Logout()
