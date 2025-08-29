@@ -48,5 +48,49 @@ namespace ITSAssignment.Web.Controllers
 
             return RedirectToAction("Add", "Mumineen");
         }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Auth");
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Its")))
+            {
+                TempData["LoginMessage"] = "Please login to continue";
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
+        {
+            var its = HttpContext.Session.GetString("Its");
+            if (string.IsNullOrEmpty(its))
+                return RedirectToAction("Login");
+
+            var user = dbContext.Mumineen.FirstOrDefault(u => u.Its.ToString() == its);
+            if (user == null)
+                return RedirectToAction("Login");
+
+            if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.Password))
+            {
+                ViewBag.Message = "Current password is incorrect!";
+                return View();
+            }
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await dbContext.SaveChangesAsync();
+
+            ViewBag.Message = "Password changed successfully!";
+            return View();
+        }
+
     }
 }
