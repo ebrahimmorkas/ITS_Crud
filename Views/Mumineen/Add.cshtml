@@ -30,36 +30,40 @@
 
                         <div class="mb-3">
                             <label asp-for="Age" class="form-label">Age</label>
-                            <input asp-for="Age" type="number" class="form-control" />
+                            <input asp-for="Age" type="number" class="form-control" min="1" max="99" />
+                            <span class="text-danger" asp-validation-for="Age"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Gender" class="form-label">Gender</label>
-                            <select asp-for="Gender" class="form-select">
-                                <option value="">Select Gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
+    <label asp-for="Gender" class="form-label">Gender</label>
+    <select asp-for="Gender" class="form-select" id="Gender">
+        <option value="">Select Gender</option>
+        <option value="male" selected="@(Model.Gender == "male")">Male</option>
+        <option value="female" selected="@(Model.Gender == "female")">Female</option>
+    </select>
+</div>
+
 
                         <div class="mb-3">
                             <label asp-for="Mobile_number" class="form-label">Mobile Number</label>
-                            <input asp-for="Mobile_number" type="text" class="form-control" />
+                            <input asp-for="Mobile_number" type="text" class="form-control" placeholder="Enter your mobile number" />
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Email_address" class="form-label">Email</label>
-                            <input asp-for="Email_address" type="email" class="form-control" />
+                            <input asp-for="Email_address" type="email" class="form-control" placeholder="Enter your email" />
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Marital_status" class="form-label">Marital Status</label>
-                            <input asp-for="Marital_status" class="form-control" />
+                            <select asp-for="Marital_status" class="form-select" id="maritalStatusDropdown">
+                                <option value="">Select Marital Status</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Address" class="form-label">Address</label>
-                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                            <textarea asp-for="Address" class="form-control" rows="2" placeholder="Enter your address"></textarea>
                         </div>
 
                         <div class="d-grid">
@@ -72,3 +76,54 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function updateMaritalStatus() {
+            const age = parseInt(document.getElementById("Age").value);
+            const gender = document.getElementById("Gender").value;
+            const maritalDropdown = document.getElementById("maritalStatusDropdown");
+            const currentValue = "@Model.Marital_status"; // DB se saved value
+
+            maritalDropdown.innerHTML = "<option value=''>Select Marital Status</option>";
+
+            if (!age || age <= 0 || age >= 100 || !gender) {
+                return;
+            }
+
+            let options = [];
+
+            // Table conditions
+            if (age >= 0 && age <= 100) options.push("Single");
+
+            if ((gender === "male" && age >= 16 && age <= 35) ||
+                (gender === "female" && age >= 15 && age <= 35)) {
+                options.push("Engaged");
+            }
+
+            if ((gender === "male" && age >= 21) ||
+                (gender === "female" && age >= 18)) {
+                options.push("Married", "Divorced", "Widowed");
+            }
+
+            options.forEach(status => {
+                const opt = document.createElement("option");
+                opt.value = status;
+                opt.textContent = status;
+
+                // agar DB me already ye status saved hai -> preselect
+                if (status === currentValue) {
+                    opt.selected = true;
+                }
+
+                maritalDropdown.appendChild(opt);
+            });
+        }
+
+        document.getElementById("Age").addEventListener("input", updateMaritalStatus);
+        document.getElementById("Gender").addEventListener("change", updateMaritalStatus);
+
+        // Run once when page loads
+        window.onload = updateMaritalStatus;
+    </script>
+}

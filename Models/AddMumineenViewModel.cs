@@ -1,10 +1,15 @@
-﻿namespace ITSAssignment.Web.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ITSAssignment.Web.Models
 {
     public class AddMumineenViewModel
     {
         public int Its { get; set; }
         public string? Name { get; set; }
+
+        [Range(1, 99, ErrorMessage = "Age must be between 1 and 99")]
         public int Age { get; set; }
+
         public string? Gender { get; set; }
         public string? Mobile_number { get; set; }
         public string? Email_address { get; set; }
