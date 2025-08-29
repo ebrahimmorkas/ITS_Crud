@@ -17,6 +17,19 @@ namespace ITSAssignment.Web.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            // 🔥 Agar already login hai to login page mat dikhao
+            var its = HttpContext.Session.GetString("Its");
+            var role = HttpContext.Session.GetString("Role");
+
+            if (!string.IsNullOrEmpty(its))
+            {
+                if (role == "admin")
+                    return RedirectToAction("AddMumineen", "Admin");
+
+                if (role == "user")
+                    return RedirectToAction("Add", "Mumineen");
+            }
+
             return View();
         }
 
